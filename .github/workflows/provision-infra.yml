@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5  # or whatever version you're using
 
       - name: Terraform Init & Plan
         run: |
