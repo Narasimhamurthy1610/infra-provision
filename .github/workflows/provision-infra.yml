@@ -1,0 +1,45 @@
+name: Provision Infra
+
+on:
+  workflow_dispatch:
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Terraform Init & Plan
+        run: |
+          cd infra
+          terraform init
+          terraform plan -out=tfplan
+
+      - name: Upload Plan for Approval
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: infra/tfplan
+
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://your-env-link-if-any
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Download Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: infra/
+
+      - name: Terraform Apply (Manual Approval)
+        run: |
+          cd infra
+          terraform apply tfplan
+
