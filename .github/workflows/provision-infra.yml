@@ -12,7 +12,7 @@ jobs:
 
       - name: Terraform Init & Plan
         run: |
-          cd infra
+          #          cd infra
           terraform init
           terraform plan -out=tfplan
 
