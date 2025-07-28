@@ -34,3 +34,41 @@ variable "db_password" {
   sensitive   = true
 }
 
+variable "private_key_path" {
+  description = "Path to the private key for SSH access to EC2 instances"
+}
+
+variable "instance_type" {
+  description = "The type of EC2 instance to launch"
+  default     = "t2.micro"
+}
+
+
+variable "cluster_name" {
+  description = "The name of the EKS cluster"
+  type        = string
+}
+
+variable "cluster_version" {
+  description = "The version of the EKS cluster"
+  type        = string
+}
+
+/*variable "subnet_ids" {
+  description = "List of subnet IDs for the EKS cluster"
+  type        = list(string)
+}
+*/
+
+variable "node_groups" {
+  description = "Map of node group configurations"
+  type        = map(object({
+    instance_types = list(string)
+    capacity_type  = string
+    scaling_config = object({
+      desired_size = number
+      max_size     = number
+      min_size     = number
+    })
+  }))
+}

@@ -15,28 +15,15 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "app" {
   ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   subnet_id              = var.public_subnet_id
   key_name               = "test"
   vpc_security_group_ids = [var.security_group_id]
 
-  user_data = <<-EOF
-              #!/bin/bash
-              apt-get update -y
-              sudo apt install -y python3 python3-pip
-              sudo apt install -y docker.io
-              systemctl start docker
-              systemctl enable docker
-              sudo usermod -aG docker $USER
-              newgrp docker
-              docker ps
-              apt-get install -y nginx
-              systemctl start nginx
-              systemctl enable nginx
-
-
-              echo "Hello from Terraform EC2" > /var/www/html/index.html
-              EOF
+    root_block_device {
+    volume_size = 50     # Change from 8 to 50
+    volume_type = "gp3"  # or gp2
+  }
 
   tags = {
     Name      = "AppServer"
